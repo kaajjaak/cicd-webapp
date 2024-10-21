@@ -1,3 +1,4 @@
+---
 name: Build and test
 on:
   push:
@@ -21,8 +22,19 @@ jobs:
       - name: Lint code
         run: yarn lint
 
+      - name: Start application server
+        run: yarn start &
+        env:
+          PORT: 3000
+
+      - name: Wait for server to start
+        run: sleep 10
+
       - name: Run tests
         run: yarn test
+
+      - name: Stop application server
+        run: pkill -f "node server.js"
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
