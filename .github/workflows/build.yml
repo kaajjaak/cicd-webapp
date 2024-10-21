@@ -27,14 +27,17 @@ jobs:
         env:
           PORT: 3000
 
-      - name: Wait for server to start
+      - name: Wait for server to startsss
         run: sleep 10
 
       - name: Run tests
         run: yarn test
 
       - name: Stop application server
-        run: pkill -f "node server.js"
+        run: |
+          ps aux | grep node
+          pkill -f "node.*server.js" || true
+          killall node || true
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
