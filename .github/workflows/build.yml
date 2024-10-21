@@ -22,12 +22,28 @@ jobs:
       - name: Lint code
         run: yarn lint
 
+      - name: Set up Snyk
+        uses: snyk/actions/setup@master
+
+      - name: Run Snyk to check for vulnerabilities
+        uses: snyk/actions/node@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          command: test
+          args: --severity-threshold=high
+
+      - name: Upload result to GitHub Code Scanning
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: snyk.sarif
+
       - name: Start application server
         run: yarn start &
         env:
           PORT: 3000
 
-      - name: Wait for server to startsss
+      - name: Wait for server to start
         run: sleep 10
 
       - name: Run tests
